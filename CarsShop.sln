@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsShop.API", "CarsShop.API\CarsShop.API.csproj", "{2F5E5A35-5570-4E29-95AA-91B7F68CEEE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsShop.DAL", "CarsShop.DAL\CarsShop.DAL.csproj", "{73C9471D-5B54-40B4-A861-F6395B5DB734}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsShop.DTO", "CarsShop.DTO\CarsShop.DTO.csproj", "{C477F909-4896-4E60-8DB3-64EE5469A4D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F5E5A35-5570-4E29-95AA-91B7F68CEEE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F5E5A35-5570-4E29-95AA-91B7F68CEEE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F5E5A35-5570-4E29-95AA-91B7F68CEEE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F5E5A35-5570-4E29-95AA-91B7F68CEEE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73C9471D-5B54-40B4-A861-F6395B5DB734}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73C9471D-5B54-40B4-A861-F6395B5DB734}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73C9471D-5B54-40B4-A861-F6395B5DB734}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73C9471D-5B54-40B4-A861-F6395B5DB734}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C477F909-4896-4E60-8DB3-64EE5469A4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C477F909-4896-4E60-8DB3-64EE5469A4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C477F909-4896-4E60-8DB3-64EE5469A4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C477F909-4896-4E60-8DB3-64EE5469A4D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
