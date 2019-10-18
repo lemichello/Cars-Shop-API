@@ -32,6 +32,8 @@ namespace CarsShop.API.Configuration
             CreateMap<ColorDto, Color>();
             CreateMap<Vendor, VendorDto>();
             CreateMap<VendorDto, Vendor>();
+            CreateMap<EngineVolume, EngineVolumeDto>();
+            CreateMap<EngineVolumeDto, EngineVolume>();
         }
     }
 }
