@@ -30,6 +30,8 @@ namespace CarsShop.API.Configuration
             CreateMap<CarDto, Car>();
             CreateMap<Color, ColorDto>();
             CreateMap<ColorDto, Color>();
+            CreateMap<Vendor, VendorDto>();
+            CreateMap<VendorDto, Vendor>();
         }
     }
 }

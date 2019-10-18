@@ -8,6 +8,7 @@ using CarsShop.DAL.Repositories.Abstraction;
 using CarsShop.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.API.Controllers
 {
@@ -26,6 +27,7 @@ namespace CarsShop.API.Controllers
         {
             var colors = _colorsRepository
                 .GetAll()
+                .AsNoTracking()
                 .Select(i => _dtoMapper.Map<ColorDto>(i))
                 .ToList();
 
