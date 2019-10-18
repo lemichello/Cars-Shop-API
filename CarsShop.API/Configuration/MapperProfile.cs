@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AutoMapper;
 using CarsShop.DAL.Entities;
@@ -9,6 +10,11 @@ namespace CarsShop.API.Configuration
     {
         public MapperProfile()
         {
+            CreateMap<CarDto, PriceHistory>()
+                .ForMember(dst => dst.CarId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dst => dst.Date, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dst => dst.Id, opt => opt.Ignore());
+
             CreateMap<Car, PresentationCarDto>()
                 .ForMember(dest => dest.Color,
                     opt => opt.MapFrom(src => src.Color.Name))
@@ -20,6 +26,8 @@ namespace CarsShop.API.Configuration
                     opt => opt.MapFrom(src => src.EngineVolume.Volume))
                 .ForMember(dest => dest.Price,
                     opt => opt.MapFrom(src => src.PriceHistories.Last().Price));
+
+            CreateMap<CarDto, Car>();
         }
     }
 }
