@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using AutoMapper;
 using CarsShop.DAL.Entities;
@@ -17,9 +16,9 @@ namespace CarsShop.API.Controllers
         public CarsController(IRepository<Car> carsRepository, IRepository<PriceHistory> pricesRepository,
             Profile profile)
         {
-            _carsRepository = carsRepository;
+            _carsRepository   = carsRepository;
             _pricesRepository = pricesRepository;
-            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _dtoMapper        = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
         }
 
         [HttpGet]

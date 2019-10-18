@@ -28,12 +28,18 @@ namespace CarsShop.API.Configuration
                     opt => opt.MapFrom(src => src.PriceHistories.Last().Price));
 
             CreateMap<CarDto, Car>();
+
             CreateMap<Color, ColorDto>();
             CreateMap<ColorDto, Color>();
+
             CreateMap<Vendor, VendorDto>();
             CreateMap<VendorDto, Vendor>();
+
             CreateMap<EngineVolume, EngineVolumeDto>();
             CreateMap<EngineVolumeDto, EngineVolume>();
+
+            CreateMap<Model, ModelDto>();
+            CreateMap<ModelDto, Model>();
         }
     }
 }
