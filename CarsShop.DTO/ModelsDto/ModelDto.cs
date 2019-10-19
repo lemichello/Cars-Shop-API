@@ -1,4 +1,4 @@
-namespace CarsShop.DTO
+namespace CarsShop.DTO.ModelsDto
 {
     public class ModelDto
     {

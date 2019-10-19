@@ -2,10 +2,10 @@ using System.Linq;
 using AutoMapper;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
-using CarsShop.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarsShop.API.Helpers;
+using CarsShop.DTO.CarsDto;
 
 namespace CarsShop.API.Controllers
 {
@@ -45,7 +45,7 @@ namespace CarsShop.API.Controllers
             if (car == null)
                 return NotFound();
 
-            return Ok(_dtoMapper.Map<PresentationCarDto>(car));
+            return Ok(_dtoMapper.Map<DetailedCarDto>(car));
         }
 
         [HttpPost]

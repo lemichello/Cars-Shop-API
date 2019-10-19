@@ -2,7 +2,7 @@
 using AutoMapper;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
-using CarsShop.DTO;
+using CarsShop.DTO.VendorsDto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

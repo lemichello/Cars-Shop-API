@@ -1,4 +1,4 @@
-namespace CarsShop.DTO
+namespace CarsShop.DTO.CarsDto
 {
     public class PresentationCarDto : BaseCarDto
     {
@@ -6,5 +6,6 @@ namespace CarsShop.DTO
         public string Vendor { get; set; }
         public string Color { get; set; }
         public float EngineVolume { get; set; }
+        public float Price { get; set; }
     }
 }

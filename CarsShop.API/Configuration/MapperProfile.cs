@@ -2,7 +2,12 @@ using System;
 using System.Linq;
 using AutoMapper;
 using CarsShop.DAL.Entities;
-using CarsShop.DTO;
+using CarsShop.DTO.CarsDto;
+using CarsShop.DTO.ColorsDto;
+using CarsShop.DTO.EngineVolumesDto;
+using CarsShop.DTO.ModelsDto;
+using CarsShop.DTO.PriceHistoriesDto;
+using CarsShop.DTO.VendorsDto;
 
 namespace CarsShop.API.Configuration
 {
@@ -10,6 +15,8 @@ namespace CarsShop.API.Configuration
     {
         public MapperProfile()
         {
+            CreateMap<PriceHistory, PriceHistoryDto>();
+
             CreateMap<CarDto, PriceHistory>()
                 .ForMember(dst => dst.CarId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dst => dst.Date, opt => opt.MapFrom(src => DateTime.Now))
@@ -28,6 +35,17 @@ namespace CarsShop.API.Configuration
                     opt => opt.MapFrom(src => src.PriceHistories.Last().Price));
 
             CreateMap<CarDto, Car>();
+            CreateMap<Car, DetailedCarDto>()
+                .ForMember(dest => dest.Color,
+                    opt => opt.MapFrom(src => src.Color.Name))
+                .ForMember(dest => dest.Model,
+                    opt => opt.MapFrom(src => src.Model.Name))
+                .ForMember(dest => dest.Vendor,
+                    opt => opt.MapFrom(src => src.Model.Vendor.Name))
+                .ForMember(dest => dest.EngineVolume,
+                    opt => opt.MapFrom(src => src.EngineVolume.Volume))
+                .ForMember(dest => dest.PricesHistory,
+                    opt => opt.MapFrom(src => src.PriceHistories.Select(i => i)));
 
             CreateMap<Color, ColorDto>();
             CreateMap<ColorDto, Color>();
