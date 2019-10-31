@@ -46,8 +46,6 @@ namespace CarsShop.API
 
             app.UseCors("CorsPolicy");
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
