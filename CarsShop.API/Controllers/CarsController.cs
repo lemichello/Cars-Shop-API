@@ -22,11 +22,15 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetCars()
+        public IActionResult GetCars([FromQuery] int index, [FromQuery] int size)
         {
-            var cars = _carsRepository.GetAll()
+            var cars = _carsRepository
+                .GetAll()
                 .AsNoTracking()
-                .ApplyIncludes()
+                .Include(x => x.Model)
+                .ThenInclude(x => x.Vendor)
+                .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
+                .WithPagination(index, size)
                 .Select(i => _dtoMapper.Map<PresentationCarDto>(i));
 
             return Ok(cars.ToList());
@@ -39,7 +43,9 @@ namespace CarsShop.API.Controllers
             var car = _carsRepository
                 .GetAll(i => i.Id == carId)
                 .AsNoTracking()
-                .ApplyIncludes()
+                .Include(x => x.Model)
+                .ThenInclude(x => x.Vendor)
+                .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .FirstOrDefault();
 
             if (car == null)

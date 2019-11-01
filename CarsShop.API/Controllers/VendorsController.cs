@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using CarsShop.API.Helpers;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
 using CarsShop.DTO.VendorsDto;
@@ -19,13 +20,13 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetVendors()
+        public ActionResult GetVendors([FromQuery] int index, [FromQuery] int size)
         {
             var vendors = _vendorsRepository
                 .GetAll()
                 .AsNoTracking()
-                .Select(i => _dtoMapper.Map<VendorDto>(i))
-                .ToList();
+                .WithPagination(index, size)
+                .Select(i => _dtoMapper.Map<VendorDto>(i));
 
             return Ok(vendors);
         }

@@ -1,5 +1,6 @@
 using System.Linq;
 using AutoMapper;
+using CarsShop.API.Helpers;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
 using CarsShop.DTO.ModelsDto;
@@ -20,11 +21,12 @@ namespace CarsShop.API.Controllers
 
         [HttpGet]
         [Route("{vendorId}")]
-        public IActionResult GetModels(int vendorId)
+        public IActionResult GetModels(int vendorId, [FromQuery] int index, [FromQuery] int size)
         {
             var models = _modelsRepository
                 .GetAll(i => i.VendorId == vendorId)
                 .AsNoTracking()
+                .WithPagination(index, size)
                 .Select(i => _dtoMapper.Map<ModelDto>(i))
                 .ToList();
 
