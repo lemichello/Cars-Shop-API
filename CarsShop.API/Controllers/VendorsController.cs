@@ -20,7 +20,7 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetVendors([FromQuery] int index, [FromQuery] int size)
+        public IActionResult GetVendors([FromQuery] int? index, [FromQuery] int? size)
         {
             var vendors = _vendorsRepository
                 .GetAll()
@@ -40,6 +40,12 @@ namespace CarsShop.API.Controllers
             _vendorsRepository.Add(_dtoMapper.Map<Vendor>(vendor));
 
             return Ok();
+        }
+
+        [HttpGet("count")]
+        public IActionResult GetVendorsCount()
+        {
+            return Ok(_vendorsRepository.GetAll().Count());
         }
 
         private readonly IRepository<Vendor> _vendorsRepository;

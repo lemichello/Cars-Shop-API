@@ -13,11 +13,16 @@ namespace CarsShop.API.Helpers
             return includes.Aggregate(cars, (current, include) => current.Include(include));
         }
 
-        public static IQueryable<T> WithPagination<T>(this IQueryable<T> entities, int index, int size)
+        public static IQueryable<T> WithPagination<T>(this IQueryable<T> entities, int? index, int? size)
         {
+            if (!size.HasValue || !index.HasValue)
+            {
+                return entities;
+            }
+
             return entities
-                .Skip(index * size)
-                .Take(size * (index + 1));
+                .Skip(index.Value * size.Value)
+                .Take(size.Value);
         }
     }
 }

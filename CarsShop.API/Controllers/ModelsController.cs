@@ -21,7 +21,7 @@ namespace CarsShop.API.Controllers
 
         [HttpGet]
         [Route("{vendorId}")]
-        public IActionResult GetModels(int vendorId, [FromQuery] int index, [FromQuery] int size)
+        public IActionResult GetModels(int vendorId, [FromQuery] int? index, [FromQuery] int? size)
         {
             var models = _modelsRepository
                 .GetAll(i => i.VendorId == vendorId)
@@ -42,6 +42,12 @@ namespace CarsShop.API.Controllers
             _modelsRepository.Add(_dtoMapper.Map<Model>(model));
 
             return Ok();
+        }
+
+        [HttpGet("count")]
+        public IActionResult GetModelsCount()
+        {
+            return Ok(_modelsRepository.GetAll().Count());
         }
 
         private readonly IRepository<Model> _modelsRepository;

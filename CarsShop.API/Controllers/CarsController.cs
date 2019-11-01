@@ -22,7 +22,7 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetCars([FromQuery] int index, [FromQuery] int size)
+        public IActionResult GetCars([FromQuery] int? index, [FromQuery] int? size)
         {
             var cars = _carsRepository
                 .GetAll()
@@ -104,6 +104,12 @@ namespace CarsShop.API.Controllers
             _carsRepository.Remove(deletingCar);
 
             return Ok();
+        }
+        
+        [HttpGet("count")]
+        public IActionResult GetCarsCount()
+        {
+            return Ok(_carsRepository.GetAll().Count());
         }
 
         private readonly IRepository<Car>          _carsRepository;
