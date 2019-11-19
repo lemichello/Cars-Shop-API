@@ -34,6 +34,7 @@ namespace CarsShop.API.Configuration
                 .ForMember(dest => dest.Price,
                     opt => opt.MapFrom(src => src.PriceHistories.Last().Price));
 
+            CreateMap<Car, CarDto>();
             CreateMap<CarDto, Car>();
             CreateMap<Car, DetailedCarDto>()
                 .ForMember(dest => dest.Color,

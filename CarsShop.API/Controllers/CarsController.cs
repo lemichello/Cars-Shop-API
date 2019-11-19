@@ -54,6 +54,20 @@ namespace CarsShop.API.Controllers
             return Ok(_dtoMapper.Map<DetailedCarDto>(car));
         }
 
+        [HttpGet]
+        [Route("simplified/{carId}")]
+        public IActionResult GetSimplifiedCar(int carId)
+        {
+            var car = _carsRepository.GetAll(i => i.Id == carId)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            if (car == null)
+                return NotFound();
+
+            return Ok(_dtoMapper.Map<CarDto>(car));
+        }
+
         [HttpPost]
         public IActionResult AddCar([FromBody] CarDto car)
         {
