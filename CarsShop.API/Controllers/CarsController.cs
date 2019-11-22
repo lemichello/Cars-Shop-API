@@ -60,12 +60,13 @@ namespace CarsShop.API.Controllers
         {
             var car = _carsRepository.GetAll(i => i.Id == carId)
                 .AsNoTracking()
+                .ApplyIncludes(x => x.PriceHistories, x => x.Model)
                 .FirstOrDefault();
 
             if (car == null)
                 return NotFound();
 
-            return Ok(_dtoMapper.Map<CarDto>(car));
+            return Ok(_dtoMapper.Map<EditCarDto>(car));
         }
 
         [HttpPost]
@@ -119,7 +120,7 @@ namespace CarsShop.API.Controllers
 
             return Ok();
         }
-        
+
         [HttpGet("count")]
         public IActionResult GetCarsCount()
         {
