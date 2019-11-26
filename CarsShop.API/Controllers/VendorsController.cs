@@ -48,6 +48,14 @@ namespace CarsShop.API.Controllers
             return Ok(_vendorsRepository.GetAll().Count());
         }
 
+        [HttpGet("detailed")]
+        public IActionResult GetDetailedVendors()
+        {
+            var vendors = _vendorsRepository.GetAll().ApplyIncludes(x => x.Models);
+
+            return Ok(_dtoMapper.Map<DetailedVendorDto[]>(vendors));
+        }
+
         private readonly IRepository<Vendor> _vendorsRepository;
         private readonly Mapper              _dtoMapper;
     }
