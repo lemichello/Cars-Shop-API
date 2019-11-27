@@ -127,6 +127,19 @@ namespace CarsShop.API.Controllers
             return Ok(_carsRepository.GetAll().Count());
         }
 
+        [HttpGet("min-max-prices")]
+        public IActionResult GetMinAndMaxPrices()
+        {
+            var cars = _carsRepository
+                .GetAll()
+                .ApplyIncludes(x => x.PriceHistories).ToList();
+
+            var min = cars.Min(x => x.PriceHistories.Last().Price);
+            var max = cars.Max(x => x.PriceHistories.Last().Price);
+
+            return Ok(new[] {min, max});
+        }
+
         private readonly IRepository<Car>          _carsRepository;
         private readonly IRepository<PriceHistory> _pricesRepository;
         private readonly Mapper                    _dtoMapper;
