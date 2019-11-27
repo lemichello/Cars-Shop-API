@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarsShop.API.Helpers;
 using CarsShop.DTO.CarsDto;
+using CarsShop.DTO.FiltersDto;
 
 namespace CarsShop.API.Controllers
 {
@@ -132,12 +133,30 @@ namespace CarsShop.API.Controllers
         {
             var cars = _carsRepository
                 .GetAll()
+                .AsNoTracking()
                 .ApplyIncludes(x => x.PriceHistories).ToList();
 
             var min = cars.Min(x => x.PriceHistories.Last().Price);
             var max = cars.Max(x => x.PriceHistories.Last().Price);
 
             return Ok(new[] {min, max});
+        }
+
+        [HttpPost("filtered")]
+        public IActionResult GetFilteredCars([FromBody] CarsFilter filter, [FromQuery] int? index,
+            [FromQuery] int? size)
+        {
+            var cars = _carsRepository
+                .GetAll()
+                .AsNoTracking()
+                .ApplyFiltering(filter)
+                .Include(x => x.Model)
+                .ThenInclude(x => x.Vendor)
+                .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
+                .WithPagination(index, size)
+                .Select(x => _dtoMapper.Map<PresentationCarDto>(x));
+
+            return Ok(cars);
         }
 
         private readonly IRepository<Car>          _carsRepository;
