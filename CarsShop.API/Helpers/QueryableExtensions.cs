@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
+using CarsShop.DAL.Entities;
+using CarsShop.DTO.FiltersDto;
 
 namespace CarsShop.API.Helpers
 {
@@ -23,6 +25,15 @@ namespace CarsShop.API.Helpers
             return entities
                 .Skip(index.Value * size.Value)
                 .Take(size.Value);
+        }
+
+        public static IQueryable<Car> ApplyFiltering(this IQueryable<Car> query, CarsFilter filter)
+        {
+            return query
+                .Where(FiltersConverter.GetModelsFunc(filter))
+                .Where(FiltersConverter.GetColorFunc(filter))
+                .Where(FiltersConverter.GetEngineVolumeFunc(filter))
+                .Where(FiltersConverter.GetPriceFunc(filter));
         }
     }
 }
