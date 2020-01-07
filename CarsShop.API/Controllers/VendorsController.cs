@@ -25,10 +25,9 @@ namespace CarsShop.API.Controllers
             var vendors = _vendorsRepository
                 .GetAll()
                 .AsNoTracking()
-                .WithPagination(index, size)
-                .Select(i => _dtoMapper.Map<VendorDto>(i));
+                .ApplyIncludes(x => x.Models);
 
-            return Ok(vendors);
+            return Ok(_dtoMapper.Map<VendorDto[]>(vendors));
         }
 
         [HttpPost]
@@ -46,14 +45,6 @@ namespace CarsShop.API.Controllers
         public IActionResult GetVendorsCount()
         {
             return Ok(_vendorsRepository.GetAll().Count());
-        }
-
-        [HttpGet("detailed")]
-        public IActionResult GetDetailedVendors()
-        {
-            var vendors = _vendorsRepository.GetAll().ApplyIncludes(x => x.Models);
-
-            return Ok(_dtoMapper.Map<DetailedVendorDto[]>(vendors));
         }
 
         private readonly IRepository<Vendor> _vendorsRepository;
