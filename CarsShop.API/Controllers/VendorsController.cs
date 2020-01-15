@@ -25,6 +25,7 @@ namespace CarsShop.API.Controllers
             var vendors = _vendorsRepository
                 .GetAll()
                 .AsNoTracking()
+                .WithPagination(index, size)
                 .ApplyIncludes(x => x.Models);
 
             return Ok(_dtoMapper.Map<VendorDto[]>(vendors));
