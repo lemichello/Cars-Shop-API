@@ -17,9 +17,9 @@ namespace CarsShop.API.Controllers
         public CarsController(IRepository<Car> carsRepository, IRepository<PriceHistory> pricesRepository,
             Profile profile)
         {
-            _carsRepository   = carsRepository;
+            _carsRepository = carsRepository;
             _pricesRepository = pricesRepository;
-            _dtoMapper        = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
         }
 
         [HttpGet]
@@ -66,9 +66,10 @@ namespace CarsShop.API.Controllers
             _carsRepository.Add(newCar);
 
             editCar.Id = newCar.Id;
+
             _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(editCar));
 
-            return Ok();
+            return GetCar(newCar.Id);
         }
 
         [HttpPut]
@@ -88,9 +89,11 @@ namespace CarsShop.API.Controllers
             if (editCar.Price != lastCarPrice)
                 _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(editCar));
 
-            _carsRepository.Edit(_dtoMapper.Map<Car>(editCar));
+            var updatedCar = _dtoMapper.Map<Car>(editCar);
 
-            return Ok();
+            _carsRepository.Edit(_dtoMapper.Map<Car>(updatedCar));
+
+            return GetCar(carId);
         }
 
         [HttpDelete]
@@ -104,7 +107,7 @@ namespace CarsShop.API.Controllers
 
             _carsRepository.Remove(deletingCar);
 
-            return Ok();
+            return Ok(deletingCar);
         }
 
         [HttpGet("count")]
@@ -144,8 +147,8 @@ namespace CarsShop.API.Controllers
             return Ok(cars);
         }
 
-        private readonly IRepository<Car>          _carsRepository;
+        private readonly IRepository<Car> _carsRepository;
         private readonly IRepository<PriceHistory> _pricesRepository;
-        private readonly Mapper                    _dtoMapper;
+        private readonly Mapper _dtoMapper;
     }
 }

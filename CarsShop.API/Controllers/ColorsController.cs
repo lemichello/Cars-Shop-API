@@ -15,7 +15,7 @@ namespace CarsShop.API.Controllers
         public ColorsController(IRepository<Color> colorsRepository, Profile profile)
         {
             _colorsRepository = colorsRepository;
-            _dtoMapper        = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
         }
 
         [HttpGet]
@@ -36,12 +36,14 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            _colorsRepository.Add(_dtoMapper.Map<Color>(color));
+            var newColor = _dtoMapper.Map<Color>(color);
 
-            return Ok();
+            _colorsRepository.Add(newColor);
+
+            return Ok(_dtoMapper.Map<ColorDto>(newColor));
         }
 
         private readonly IRepository<Color> _colorsRepository;
-        private readonly Mapper             _dtoMapper;
+        private readonly Mapper _dtoMapper;
     }
 }

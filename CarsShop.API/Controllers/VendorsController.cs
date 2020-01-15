@@ -16,7 +16,7 @@ namespace CarsShop.API.Controllers
         public VendorsController(IRepository<Vendor> vendorsRepository, Profile profile)
         {
             _vendorsRepository = vendorsRepository;
-            _dtoMapper         = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
         }
 
         [HttpGet]
@@ -37,9 +37,11 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            _vendorsRepository.Add(_dtoMapper.Map<Vendor>(vendor));
+            var newVendor = _dtoMapper.Map<Vendor>(vendor);
 
-            return Ok();
+            _vendorsRepository.Add(newVendor);
+
+            return Ok(_dtoMapper.Map<VendorDto>(newVendor));
         }
 
         [HttpGet("count")]
@@ -49,6 +51,6 @@ namespace CarsShop.API.Controllers
         }
 
         private readonly IRepository<Vendor> _vendorsRepository;
-        private readonly Mapper              _dtoMapper;
+        private readonly Mapper _dtoMapper;
     }
 }
