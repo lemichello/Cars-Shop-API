@@ -110,10 +110,17 @@ namespace CarsShop.API.Controllers
             return Ok(deletingCar);
         }
 
-        [HttpGet("count")]
-        public IActionResult GetCarsCount()
+        [HttpPost("count")]
+        public IActionResult GetCarsCount([FromBody] CarsFilter filter)
         {
-            return Ok(_carsRepository.GetAll().Count());
+            return filter.ModelsId != null
+                ? Ok(_carsRepository
+                    .GetAll()
+                    .ApplyFiltering(filter)
+                    .Count())
+                : Ok(_carsRepository
+                    .GetAll()
+                    .Count());
         }
 
         [HttpGet("min-max-prices")]
