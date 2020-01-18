@@ -46,10 +46,12 @@ namespace CarsShop.API.Controllers
             return Ok(_dtoMapper.Map<ModelDto>(newModel));
         }
 
-        [HttpGet("count")]
-        public IActionResult GetModelsCount()
+        [HttpGet("count/{vendorId}")]
+        public IActionResult GetModelsCount(int vendorId)
         {
-            return Ok(_modelsRepository.GetAll().Count());
+            return Ok(_modelsRepository
+                .GetAll(x => x.VendorId == vendorId)
+                .Count());
         }
 
         private readonly IRepository<Model> _modelsRepository;
