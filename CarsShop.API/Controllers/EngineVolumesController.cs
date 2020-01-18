@@ -15,7 +15,7 @@ namespace CarsShop.API.Controllers
         public EngineVolumesController(IRepository<EngineVolume> engineVolumesRepository, Profile profile)
         {
             _engineVolumesRepository = engineVolumesRepository;
-            _dtoMapper               = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
         }
 
         [HttpGet]
@@ -36,12 +36,14 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            _engineVolumesRepository.Add(_dtoMapper.Map<EngineVolume>(engineVolume));
+            var newEngineVolume = _dtoMapper.Map<EngineVolume>(engineVolume);
 
-            return Ok();
+            _engineVolumesRepository.Add(newEngineVolume);
+
+            return Ok(_dtoMapper.Map<EngineVolumeDto>(newEngineVolume));
         }
 
         private readonly IRepository<EngineVolume> _engineVolumesRepository;
-        private readonly Mapper                    _dtoMapper;
+        private readonly Mapper _dtoMapper;
     }
 }

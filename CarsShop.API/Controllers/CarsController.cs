@@ -17,9 +17,9 @@ namespace CarsShop.API.Controllers
         public CarsController(IRepository<Car> carsRepository, IRepository<PriceHistory> pricesRepository,
             Profile profile)
         {
-            _carsRepository   = carsRepository;
+            _carsRepository = carsRepository;
             _pricesRepository = pricesRepository;
-            _dtoMapper        = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
         }
 
         [HttpGet]
@@ -32,7 +32,7 @@ namespace CarsShop.API.Controllers
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .WithPagination(index, size)
-                .Select(i => _dtoMapper.Map<PresentationCarDto>(i));
+                .Select(i => _dtoMapper.Map<CarDto>(i));
 
             return Ok(cars.ToList());
         }
@@ -52,60 +52,48 @@ namespace CarsShop.API.Controllers
             if (car == null)
                 return NotFound();
 
-            return Ok(_dtoMapper.Map<DetailedCarDto>(car));
-        }
-
-        [HttpGet]
-        [Route("simplified/{carId}")]
-        public IActionResult GetSimplifiedCar(int carId)
-        {
-            var car = _carsRepository.GetAll(i => i.Id == carId)
-                .AsNoTracking()
-                .ApplyIncludes(x => x.PriceHistories, x => x.Model)
-                .FirstOrDefault();
-
-            if (car == null)
-                return NotFound();
-
-            return Ok(_dtoMapper.Map<EditCarDto>(car));
+            return Ok(_dtoMapper.Map<CarDto>(car));
         }
 
         [HttpPost]
-        public IActionResult AddCar([FromBody] CarDto car)
+        public IActionResult AddCar([FromBody] EditCarDto editCar)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var newCar = _dtoMapper.Map<Car>(car);
+            var newCar = _dtoMapper.Map<Car>(editCar);
 
             _carsRepository.Add(newCar);
 
-            car.Id = newCar.Id;
-            _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(car));
+            editCar.Id = newCar.Id;
 
-            return Ok();
+            _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(editCar));
+
+            return GetCar(newCar.Id);
         }
 
         [HttpPut]
         [Route("{carId}")]
-        public IActionResult UpdateCar(int carId, [FromBody] CarDto car)
+        public IActionResult UpdateCar(int carId, [FromBody] EditCarDto editCar)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            if (carId != car.Id)
+            if (carId != editCar.Id)
             {
                 return BadRequest();
             }
 
             var lastCarPrice = _pricesRepository.GetAll(i => i.CarId == carId).ToList().Last().Price;
 
-            if (car.Price != lastCarPrice)
-                _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(car));
+            if (editCar.Price != lastCarPrice)
+                _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(editCar));
 
-            _carsRepository.Edit(_dtoMapper.Map<Car>(car));
+            var updatedCar = _dtoMapper.Map<Car>(editCar);
 
-            return Ok();
+            _carsRepository.Edit(_dtoMapper.Map<Car>(updatedCar));
+
+            return GetCar(carId);
         }
 
         [HttpDelete]
@@ -119,13 +107,20 @@ namespace CarsShop.API.Controllers
 
             _carsRepository.Remove(deletingCar);
 
-            return Ok();
+            return Ok(deletingCar);
         }
 
-        [HttpGet("count")]
-        public IActionResult GetCarsCount()
+        [HttpPost("count")]
+        public IActionResult GetCarsCount([FromBody] CarsFilter filter)
         {
-            return Ok(_carsRepository.GetAll().Count());
+            return filter.ModelsId != null
+                ? Ok(_carsRepository
+                    .GetAll()
+                    .ApplyFiltering(filter)
+                    .Count())
+                : Ok(_carsRepository
+                    .GetAll()
+                    .Count());
         }
 
         [HttpGet("min-max-prices")]
@@ -154,13 +149,13 @@ namespace CarsShop.API.Controllers
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .WithPagination(index, size)
-                .Select(x => _dtoMapper.Map<PresentationCarDto>(x));
+                .Select(x => _dtoMapper.Map<CarDto>(x));
 
             return Ok(cars);
         }
 
-        private readonly IRepository<Car>          _carsRepository;
+        private readonly IRepository<Car> _carsRepository;
         private readonly IRepository<PriceHistory> _pricesRepository;
-        private readonly Mapper                    _dtoMapper;
+        private readonly Mapper _dtoMapper;
     }
 }
