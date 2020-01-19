@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using CarsShop.API.Helpers;
 using CarsShop.DAL.Entities;
@@ -23,34 +23,35 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetVendors([FromQuery] int? index, [FromQuery] int? size)
+        public async Task<IActionResult> GetVendors([FromQuery] int? index, [FromQuery] int? size)
         {
-            var vendors = _vendorsRepository
+            var vendors = await _vendorsRepository
                 .GetAll()
                 .AsNoTracking()
                 .WithPagination(index, size)
-                .ApplyIncludes(x => x.Models);
+                .ApplyIncludes(x => x.Models)
+                .ToListAsync();
 
             return Ok(_mapper.Map<VendorDto[]>(vendors));
         }
 
         [HttpPost]
-        public ActionResult AddVendor([FromBody] VendorDto vendor)
+        public async Task<ActionResult> AddVendor([FromBody] VendorDto vendor)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var newVendor = _mapper.Map<Vendor>(vendor);
 
-            _vendorsRepository.Add(newVendor);
+            await _vendorsRepository.Add(newVendor);
 
             return Ok(_mapper.Map<VendorDto>(newVendor));
         }
 
         [HttpGet("count")]
-        public IActionResult GetVendorsCount()
+        public async Task<IActionResult> GetVendorsCount()
         {
-            return Ok(_vendorsRepository.GetAll().Count());
+            return Ok(await _vendorsRepository.GetAll().CountAsync());
         }
     }
 }

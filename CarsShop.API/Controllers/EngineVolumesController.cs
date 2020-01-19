@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
@@ -22,26 +22,25 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetEngineVolumes()
+        public async Task<IActionResult> GetEngineVolumes()
         {
-            var engineVolumes = _engineVolumesRepository
+            var engineVolumes = await _engineVolumesRepository
                 .GetAll()
                 .AsNoTracking()
-                .Select(i => _mapper.Map<EngineVolumeDto>(i))
-                .ToList();
+                .ToListAsync();
 
-            return Ok(engineVolumes);
+            return Ok(_mapper.Map<EngineVolumeDto[]>(engineVolumes));
         }
 
         [HttpPost]
-        public IActionResult AddEngineVolume([FromBody] EngineVolumeDto engineVolume)
+        public async Task<IActionResult> AddEngineVolume([FromBody] EngineVolumeDto engineVolume)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var newEngineVolume = _mapper.Map<EngineVolume>(engineVolume);
 
-            _engineVolumesRepository.Add(newEngineVolume);
+            await _engineVolumesRepository.Add(newEngineVolume);
 
             return Ok(_mapper.Map<EngineVolumeDto>(newEngineVolume));
         }

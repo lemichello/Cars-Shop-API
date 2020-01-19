@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using CarsShop.API.Helpers;
 using CarsShop.DAL.Entities;
@@ -27,31 +28,31 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetCars([FromQuery] int? index, [FromQuery] int? size)
+        public async Task<IActionResult> GetCars([FromQuery] int? index, [FromQuery] int? size)
         {
-            var cars = _carsRepository
+            var cars = await _carsRepository
                 .GetAll()
                 .AsNoTracking()
                 .Include(x => x.Model)
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .WithPagination(index, size)
-                .Select(i => _mapper.Map<CarDto>(i));
+                .ToListAsync();
 
-            return Ok(cars.ToList());
+            return Ok(_mapper.Map<CarDto[]>(cars));
         }
 
         [HttpGet]
         [Route("{carId}")]
-        public IActionResult GetCar(int carId)
+        public async Task<IActionResult> GetCar(int carId)
         {
-            var car = _carsRepository
+            var car = await _carsRepository
                 .GetAll(i => i.Id == carId)
                 .AsNoTracking()
                 .Include(x => x.Model)
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (car == null)
                 return NotFound();
@@ -60,25 +61,25 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCar([FromBody] EditCarDto editCar)
+        public async Task<IActionResult> AddCar([FromBody] EditCarDto editCar)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var newCar = _mapper.Map<Car>(editCar);
 
-            _carsRepository.Add(newCar);
+            await _carsRepository.Add(newCar);
 
             editCar.Id = newCar.Id;
 
-            _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
+            await _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
 
-            return GetCar(newCar.Id);
+            return await GetCar(newCar.Id);
         }
 
         [HttpPut]
         [Route("{carId}")]
-        public IActionResult UpdateCar(int carId, [FromBody] EditCarDto editCar)
+        public async Task<IActionResult> UpdateCar(int carId, [FromBody] EditCarDto editCar)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -88,52 +89,53 @@ namespace CarsShop.API.Controllers
                 return BadRequest();
             }
 
-            var lastCarPrice = _pricesRepository.GetAll(i => i.CarId == carId).ToList().Last().Price;
+            var lastCarPrice = await _pricesRepository.GetAll(i => i.CarId == carId).LastAsync();
 
-            if (editCar.Price != lastCarPrice)
-                _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
+            if (editCar.Price != lastCarPrice.Price)
+                await _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
 
             var updatedCar = _mapper.Map<Car>(editCar);
 
-            _carsRepository.Edit(_mapper.Map<Car>(updatedCar));
+            await _carsRepository.Edit(_mapper.Map<Car>(updatedCar));
 
-            return GetCar(carId);
+            return await GetCar(carId);
         }
 
         [HttpDelete]
         [Route("{carId}")]
-        public IActionResult DeleteCar(int carId)
+        public async Task<IActionResult> DeleteCar(int carId)
         {
-            var deletingCar = _carsRepository.GetAll(i => i.Id == carId).FirstOrDefault();
+            var deletingCar = await _carsRepository.GetAll(i => i.Id == carId).FirstOrDefaultAsync();
 
             if (deletingCar == null)
                 return NotFound();
 
-            _carsRepository.Remove(deletingCar);
+            await _carsRepository.Remove(deletingCar);
 
             return Ok(deletingCar);
         }
 
         [HttpPost("count")]
-        public IActionResult GetCarsCount([FromBody] CarsFilter filter)
+        public async Task<IActionResult> GetCarsCount([FromBody] CarsFilter filter)
         {
             return filter.ModelsId != null
-                ? Ok(_carsRepository
+                ? Ok(await _carsRepository
                     .GetAll()
                     .ApplyFiltering(filter)
-                    .Count())
-                : Ok(_carsRepository
+                    .CountAsync())
+                : Ok(await _carsRepository
                     .GetAll()
-                    .Count());
+                    .CountAsync());
         }
 
         [HttpGet("min-max-prices")]
-        public IActionResult GetMinAndMaxPrices()
+        public async Task<IActionResult> GetMinAndMaxPrices()
         {
-            var cars = _carsRepository
+            var cars = await _carsRepository
                 .GetAll()
                 .AsNoTracking()
-                .ApplyIncludes(x => x.PriceHistories).ToList();
+                .ApplyIncludes(x => x.PriceHistories)
+                .ToListAsync();
 
             var min = cars.Min(x => x.PriceHistories.Last().Price);
             var max = cars.Max(x => x.PriceHistories.Last().Price);
@@ -142,10 +144,10 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpPost("filtered")]
-        public IActionResult GetFilteredCars([FromBody] CarsFilter filter, [FromQuery] int? index,
+        public async Task<IActionResult> GetFilteredCars([FromBody] CarsFilter filter, [FromQuery] int? index,
             [FromQuery] int? size)
         {
-            var cars = _carsRepository
+            var cars = await _carsRepository
                 .GetAll()
                 .AsNoTracking()
                 .ApplyFiltering(filter)
@@ -153,9 +155,9 @@ namespace CarsShop.API.Controllers
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .WithPagination(index, size)
-                .Select(x => _mapper.Map<CarDto>(x));
+                .ToListAsync();
 
-            return Ok(cars);
+            return Ok(_mapper.Map<CarDto[]>(cars));
         }
     }
 }

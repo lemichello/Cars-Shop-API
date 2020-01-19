@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using CarsShop.DAL.Repositories.Abstraction;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,24 +18,24 @@ namespace CarsShop.DAL.Repositories.Implementation
             _dbSet = _context.Set<T>();
         }
 
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
             _dbSet.Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Remove(T entity)
+        public async Task Remove(T entity)
         {
             _dbSet.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Edit(T entity)
+        public async Task Edit(T entity)
         {
             _context.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             _context.Entry(entity).State = EntityState.Detached;
         }

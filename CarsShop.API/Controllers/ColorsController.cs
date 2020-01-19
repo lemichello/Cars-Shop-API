@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
@@ -22,26 +22,25 @@ namespace CarsShop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetColors()
+        public async Task<IActionResult> GetColors()
         {
-            var colors = _colorsRepository
+            var colors = await _colorsRepository
                 .GetAll()
                 .AsNoTracking()
-                .Select(i => _mapper.Map<ColorDto>(i))
-                .ToList();
+                .ToListAsync();
 
-            return Ok(colors);
+            return Ok(_mapper.Map<ColorDto[]>(colors));
         }
 
         [HttpPost]
-        public IActionResult AddColor([FromBody] ColorDto color)
+        public async Task<IActionResult> AddColor([FromBody] ColorDto color)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var newColor = _mapper.Map<Color>(color);
 
-            _colorsRepository.Add(newColor);
+            await _colorsRepository.Add(newColor);
 
             return Ok(_mapper.Map<ColorDto>(newColor));
         }

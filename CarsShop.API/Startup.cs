@@ -31,7 +31,7 @@ namespace CarsShop.API
                     .AllowAnyMethod()));
 
             services.AddDbContext<DbContext, EfContext>(opt => opt.UseSqlServer(Configuration["ConnectionString"]));
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+            services.AddTransient(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddAutoMapper(typeof(MapperProfile));
             services.AddControllers();
         }

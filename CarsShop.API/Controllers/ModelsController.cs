@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using CarsShop.API.Helpers;
 using CarsShop.DAL.Entities;
@@ -24,37 +24,36 @@ namespace CarsShop.API.Controllers
 
         [HttpGet]
         [Route("{vendorId}")]
-        public IActionResult GetModels(int vendorId, [FromQuery] int? index, [FromQuery] int? size)
+        public async Task<IActionResult> GetModels(int vendorId, [FromQuery] int? index, [FromQuery] int? size)
         {
-            var models = _modelsRepository
+            var models = await _modelsRepository
                 .GetAll(i => i.VendorId == vendorId)
                 .AsNoTracking()
                 .WithPagination(index, size)
-                .Select(i => _mapper.Map<ModelDto>(i))
-                .ToList();
+                .ToListAsync();
 
-            return Ok(models);
+            return Ok(_mapper.Map<ModelDto>(models));
         }
 
         [HttpPost]
-        public IActionResult AddModel([FromBody] ModelDto model)
+        public async Task<IActionResult> AddModel([FromBody] ModelDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var newModel = _mapper.Map<Model>(model);
 
-            _modelsRepository.Add(newModel);
+            await _modelsRepository.Add(newModel);
 
             return Ok(_mapper.Map<ModelDto>(newModel));
         }
 
         [HttpGet("count/{vendorId}")]
-        public IActionResult GetModelsCount(int vendorId)
+        public async Task<IActionResult> GetModelsCount(int vendorId)
         {
-            return Ok(_modelsRepository
+            return Ok(await _modelsRepository
                 .GetAll(x => x.VendorId == vendorId)
-                .Count());
+                .CountAsync());
         }
     }
 }
