@@ -8,10 +8,13 @@ namespace CarsShop.DAL.Repositories.Implementation
 {
     public class EfRepository<T> : IRepository<T> where T : class
     {
-        public EfRepository(EfContext context)
+        private readonly DbContext _context;
+        private readonly DbSet<T> _dbSet;
+
+        public EfRepository(DbContext context)
         {
             _context = context;
-            _dbSet   = _context.Set<T>();
+            _dbSet = _context.Set<T>();
         }
 
         public void Add(T entity)
@@ -45,8 +48,5 @@ namespace CarsShop.DAL.Repositories.Implementation
         {
             return _dbSet.Where(predicate).AsQueryable();
         }
-
-        private readonly EfContext _context;
-        private readonly DbSet<T>  _dbSet;
     }
 }

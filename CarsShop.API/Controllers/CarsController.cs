@@ -1,12 +1,12 @@
 using System.Linq;
 using AutoMapper;
+using CarsShop.API.Helpers;
 using CarsShop.DAL.Entities;
 using CarsShop.DAL.Repositories.Abstraction;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CarsShop.API.Helpers;
 using CarsShop.DTO.CarsDto;
 using CarsShop.DTO.FiltersDto;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.API.Controllers
 {
@@ -14,12 +14,16 @@ namespace CarsShop.API.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
+        private readonly IRepository<Car> _carsRepository;
+        private readonly IMapper _mapper;
+        private readonly IRepository<PriceHistory> _pricesRepository;
+
         public CarsController(IRepository<Car> carsRepository, IRepository<PriceHistory> pricesRepository,
-            Profile profile)
+            IMapper mapper)
         {
             _carsRepository = carsRepository;
             _pricesRepository = pricesRepository;
-            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,7 +36,7 @@ namespace CarsShop.API.Controllers
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .WithPagination(index, size)
-                .Select(i => _dtoMapper.Map<CarDto>(i));
+                .Select(i => _mapper.Map<CarDto>(i));
 
             return Ok(cars.ToList());
         }
@@ -52,7 +56,7 @@ namespace CarsShop.API.Controllers
             if (car == null)
                 return NotFound();
 
-            return Ok(_dtoMapper.Map<CarDto>(car));
+            return Ok(_mapper.Map<CarDto>(car));
         }
 
         [HttpPost]
@@ -61,13 +65,13 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var newCar = _dtoMapper.Map<Car>(editCar);
+            var newCar = _mapper.Map<Car>(editCar);
 
             _carsRepository.Add(newCar);
 
             editCar.Id = newCar.Id;
 
-            _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(editCar));
+            _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
 
             return GetCar(newCar.Id);
         }
@@ -87,11 +91,11 @@ namespace CarsShop.API.Controllers
             var lastCarPrice = _pricesRepository.GetAll(i => i.CarId == carId).ToList().Last().Price;
 
             if (editCar.Price != lastCarPrice)
-                _pricesRepository.Add(_dtoMapper.Map<PriceHistory>(editCar));
+                _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
 
-            var updatedCar = _dtoMapper.Map<Car>(editCar);
+            var updatedCar = _mapper.Map<Car>(editCar);
 
-            _carsRepository.Edit(_dtoMapper.Map<Car>(updatedCar));
+            _carsRepository.Edit(_mapper.Map<Car>(updatedCar));
 
             return GetCar(carId);
         }
@@ -149,13 +153,9 @@ namespace CarsShop.API.Controllers
                 .ThenInclude(x => x.Vendor)
                 .ApplyIncludes(x => x.Color, x => x.Model, x => x.EngineVolume, x => x.PriceHistories)
                 .WithPagination(index, size)
-                .Select(x => _dtoMapper.Map<CarDto>(x));
+                .Select(x => _mapper.Map<CarDto>(x));
 
             return Ok(cars);
         }
-
-        private readonly IRepository<Car> _carsRepository;
-        private readonly IRepository<PriceHistory> _pricesRepository;
-        private readonly Mapper _dtoMapper;
     }
 }

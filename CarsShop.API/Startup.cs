@@ -1,5 +1,5 @@
 using AutoMapper;
-using CarsShop.API.Configuration;
+using CarsShop.API.Configuration.MapperProfiles;
 using CarsShop.DAL;
 using CarsShop.DAL.Repositories.Abstraction;
 using CarsShop.DAL.Repositories.Implementation;
@@ -30,9 +30,9 @@ namespace CarsShop.API
                     .AllowAnyHeader()
                     .AllowAnyMethod()));
 
-            services.AddDbContext<EfContext>(opt => opt.UseSqlServer(Configuration["ConnectionString"]));
+            services.AddDbContext<DbContext, EfContext>(opt => opt.UseSqlServer(Configuration["ConnectionString"]));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped<Profile, MapperProfile>();
+            services.AddAutoMapper(typeof(MapperProfile));
             services.AddControllers();
         }
 

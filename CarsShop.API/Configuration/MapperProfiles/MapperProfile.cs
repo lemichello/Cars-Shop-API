@@ -9,7 +9,7 @@ using CarsShop.DTO.ModelsDto;
 using CarsShop.DTO.PriceHistoriesDto;
 using CarsShop.DTO.VendorsDto;
 
-namespace CarsShop.API.Configuration
+namespace CarsShop.API.Configuration.MapperProfiles
 {
     public class MapperProfile : Profile
     {

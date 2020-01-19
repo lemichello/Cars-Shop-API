@@ -12,10 +12,13 @@ namespace CarsShop.API.Controllers
     [ApiController]
     public class ColorsController : ControllerBase
     {
-        public ColorsController(IRepository<Color> colorsRepository, Profile profile)
+        private readonly IRepository<Color> _colorsRepository;
+        private readonly IMapper _mapper;
+
+        public ColorsController(IRepository<Color> colorsRepository, IMapper mapper)
         {
             _colorsRepository = colorsRepository;
-            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -24,7 +27,7 @@ namespace CarsShop.API.Controllers
             var colors = _colorsRepository
                 .GetAll()
                 .AsNoTracking()
-                .Select(i => _dtoMapper.Map<ColorDto>(i))
+                .Select(i => _mapper.Map<ColorDto>(i))
                 .ToList();
 
             return Ok(colors);
@@ -36,14 +39,11 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var newColor = _dtoMapper.Map<Color>(color);
+            var newColor = _mapper.Map<Color>(color);
 
             _colorsRepository.Add(newColor);
 
-            return Ok(_dtoMapper.Map<ColorDto>(newColor));
+            return Ok(_mapper.Map<ColorDto>(newColor));
         }
-
-        private readonly IRepository<Color> _colorsRepository;
-        private readonly Mapper _dtoMapper;
     }
 }

@@ -13,10 +13,13 @@ namespace CarsShop.API.Controllers
     [ApiController]
     public class ModelsController : ControllerBase
     {
-        public ModelsController(IRepository<Model> modelsRepository, Profile profile)
+        private readonly IMapper _mapper;
+        private readonly IRepository<Model> _modelsRepository;
+
+        public ModelsController(IRepository<Model> modelsRepository, IMapper mapper)
         {
             _modelsRepository = modelsRepository;
-            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -27,7 +30,7 @@ namespace CarsShop.API.Controllers
                 .GetAll(i => i.VendorId == vendorId)
                 .AsNoTracking()
                 .WithPagination(index, size)
-                .Select(i => _dtoMapper.Map<ModelDto>(i))
+                .Select(i => _mapper.Map<ModelDto>(i))
                 .ToList();
 
             return Ok(models);
@@ -39,11 +42,11 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var newModel = _dtoMapper.Map<Model>(model);
+            var newModel = _mapper.Map<Model>(model);
 
             _modelsRepository.Add(newModel);
 
-            return Ok(_dtoMapper.Map<ModelDto>(newModel));
+            return Ok(_mapper.Map<ModelDto>(newModel));
         }
 
         [HttpGet("count/{vendorId}")]
@@ -53,8 +56,5 @@ namespace CarsShop.API.Controllers
                 .GetAll(x => x.VendorId == vendorId)
                 .Count());
         }
-
-        private readonly IRepository<Model> _modelsRepository;
-        private readonly Mapper _dtoMapper;
     }
 }

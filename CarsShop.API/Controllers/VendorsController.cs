@@ -13,10 +13,13 @@ namespace CarsShop.API.Controllers
     [ApiController]
     public class VendorsController : ControllerBase
     {
-        public VendorsController(IRepository<Vendor> vendorsRepository, Profile profile)
+        private readonly IMapper _mapper;
+        private readonly IRepository<Vendor> _vendorsRepository;
+
+        public VendorsController(IRepository<Vendor> vendorsRepository, IMapper mapper)
         {
             _vendorsRepository = vendorsRepository;
-            _dtoMapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,7 +31,7 @@ namespace CarsShop.API.Controllers
                 .WithPagination(index, size)
                 .ApplyIncludes(x => x.Models);
 
-            return Ok(_dtoMapper.Map<VendorDto[]>(vendors));
+            return Ok(_mapper.Map<VendorDto[]>(vendors));
         }
 
         [HttpPost]
@@ -37,11 +40,11 @@ namespace CarsShop.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var newVendor = _dtoMapper.Map<Vendor>(vendor);
+            var newVendor = _mapper.Map<Vendor>(vendor);
 
             _vendorsRepository.Add(newVendor);
 
-            return Ok(_dtoMapper.Map<VendorDto>(newVendor));
+            return Ok(_mapper.Map<VendorDto>(newVendor));
         }
 
         [HttpGet("count")]
@@ -49,8 +52,5 @@ namespace CarsShop.API.Controllers
         {
             return Ok(_vendorsRepository.GetAll().Count());
         }
-
-        private readonly IRepository<Vendor> _vendorsRepository;
-        private readonly Mapper _dtoMapper;
     }
 }
