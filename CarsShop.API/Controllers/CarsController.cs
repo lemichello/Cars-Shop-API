@@ -89,9 +89,11 @@ namespace CarsShop.API.Controllers
                 return BadRequest();
             }
 
-            var lastCarPrice = await _pricesRepository.GetAll(i => i.CarId == carId).LastAsync();
+            var prices = await _pricesRepository
+                .GetAll(i => i.CarId == carId)
+                .ToListAsync();
 
-            if (editCar.Price != lastCarPrice.Price)
+            if (editCar.Price != prices.Last().Price)
                 await _pricesRepository.Add(_mapper.Map<PriceHistory>(editCar));
 
             var updatedCar = _mapper.Map<Car>(editCar);

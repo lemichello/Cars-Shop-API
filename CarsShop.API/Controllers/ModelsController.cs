@@ -32,7 +32,7 @@ namespace CarsShop.API.Controllers
                 .WithPagination(index, size)
                 .ToListAsync();
 
-            return Ok(_mapper.Map<ModelDto>(models));
+            return Ok(_mapper.Map<ModelDto[]>(models));
         }
 
         [HttpPost]
