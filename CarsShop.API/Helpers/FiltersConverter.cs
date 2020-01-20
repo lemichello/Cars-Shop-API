@@ -34,10 +34,16 @@ namespace CarsShop.API.Helpers
 
         public static Expression<Func<Car, bool>> GetPriceFunc(CarsFilter filter)
         {
+            if (filter.Price.SelectedDate == null)
+            {
+                return x => x.PriceHistories.OrderByDescending(i => i.Id).First().Price >= filter.Price.FromPrice &&
+                            x.PriceHistories.OrderByDescending(i => i.Id).First().Price <= filter.Price.ToPrice;
+            }
+
             return x =>
-                x.PriceHistories.First(i => (filter.Price.SelectedDate ?? DateTime.MaxValue) > i.Date).Price >=
+                x.PriceHistories.First(i => filter.Price.SelectedDate > i.Date).Price >=
                 filter.Price.FromPrice &&
-                x.PriceHistories.First(i => (filter.Price.SelectedDate ?? DateTime.MaxValue) > i.Date).Price <=
+                x.PriceHistories.First(i => filter.Price.SelectedDate > i.Date).Price <=
                 filter.Price.ToPrice;
         }
     }
