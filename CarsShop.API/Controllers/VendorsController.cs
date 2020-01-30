@@ -35,6 +35,19 @@ namespace CarsShop.API.Controllers
             return Ok(_mapper.Map<VendorDto[]>(vendors));
         }
 
+        [HttpGet]
+        [Route("{vendorId}")]
+        public async Task<IActionResult> GetVendorById(int vendorId)
+        {
+            var vendor = await _vendorsRepository
+                .GetAll(x => x.Id == vendorId)
+                .AsNoTracking()
+                .ApplyIncludes(x => x.Models)
+                .FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<VendorDto>(vendor));
+        }
+
         [HttpPost]
         public async Task<ActionResult> AddVendor([FromBody] VendorDto vendor)
         {
