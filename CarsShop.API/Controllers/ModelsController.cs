@@ -1,11 +1,9 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using CarsShop.API.Helpers;
-using CarsShop.DAL.Entities;
-using CarsShop.DAL.Repositories.Abstraction;
+using CarsShop.Business.EntityServices;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.API.Controllers
 {
@@ -14,23 +12,19 @@ namespace CarsShop.API.Controllers
     public class ModelsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IRepository<Model> _modelsRepository;
+        private readonly IModelService _modelService;
 
-        public ModelsController(IRepository<Model> modelsRepository, IMapper mapper)
+        public ModelsController(IMapper mapper, IModelService modelService)
         {
-            _modelsRepository = modelsRepository;
             _mapper = mapper;
+            _modelService = modelService;
         }
 
         [HttpGet]
         [Route("{vendorId}")]
         public async Task<IActionResult> GetModels(int vendorId, [FromQuery] int? index, [FromQuery] int? size)
         {
-            var models = await _modelsRepository
-                .GetAll(i => i.VendorId == vendorId)
-                .AsNoTracking()
-                .WithPagination(index, size)
-                .ToListAsync();
+            var models = await _modelService.GetModels(vendorId, index, size);
 
             return Ok(_mapper.Map<ModelDto[]>(models));
         }
@@ -43,7 +37,7 @@ namespace CarsShop.API.Controllers
 
             var newModel = _mapper.Map<Model>(model);
 
-            await _modelsRepository.Add(newModel);
+            await _modelService.AddModel(newModel);
 
             return Ok(_mapper.Map<ModelDto>(newModel));
         }
@@ -51,9 +45,7 @@ namespace CarsShop.API.Controllers
         [HttpGet("count/{vendorId}")]
         public async Task<IActionResult> GetModelsCount(int vendorId)
         {
-            return Ok(await _modelsRepository
-                .GetAll(x => x.VendorId == vendorId)
-                .CountAsync());
+            return Ok(await _modelService.GetModelsCount(vendorId));
         }
     }
 }

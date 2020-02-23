@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using CarsShop.DAL.Entities;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.FiltersDto;
 
-namespace CarsShop.API.Helpers
+namespace CarsShop.Business.Helpers
 {
     public static class FiltersConverter
     {

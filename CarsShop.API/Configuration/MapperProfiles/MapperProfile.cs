@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using AutoMapper;
-using CarsShop.DAL.Entities;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.CarsDto;
 using CarsShop.DTO.ColorsDto;
 using CarsShop.DTO.EngineVolumesDto;

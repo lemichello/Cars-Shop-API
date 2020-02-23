@@ -21,12 +21,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CarsShop.DAL\CarsShop.DAL.csproj" />
-      <ProjectReference Include="..\CarsShop.DTO\CarsShop.DTO.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="..\.dockerignore" />
+        <ProjectReference Include="..\CarsShop.Business\CarsShop.Business.csproj"/>
+        <ProjectReference Include="..\CarsShop.DAL.Abstraction\CarsShop.DAL.Abstraction.csproj"/>
+        <ProjectReference Include="..\CarsShop.DAL\CarsShop.DAL.csproj"/>
+        <ProjectReference Include="..\CarsShop.Data\CarsShop.Data.csproj"/>
+        <ProjectReference Include="..\CarsShop.DTO\CarsShop.DTO.csproj"/>
     </ItemGroup>
 
 </Project>

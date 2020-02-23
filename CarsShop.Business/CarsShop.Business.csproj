@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CarsShop.DAL.Abstraction\CarsShop.DAL.Abstraction.csproj"/>
+        <ProjectReference Include="..\CarsShop.Data\CarsShop.Data.csproj"/>
+        <ProjectReference Include="..\CarsShop.DTO\CarsShop.DTO.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2"/>
+    </ItemGroup>
+
+</Project>

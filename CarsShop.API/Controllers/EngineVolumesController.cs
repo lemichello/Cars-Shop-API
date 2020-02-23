@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using CarsShop.DAL.Entities;
-using CarsShop.DAL.Repositories.Abstraction;
+using CarsShop.Business.EntityServices;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.EngineVolumesDto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.API.Controllers
 {
@@ -12,22 +11,19 @@ namespace CarsShop.API.Controllers
     [ApiController]
     public class EngineVolumesController : ControllerBase
     {
-        private readonly IRepository<EngineVolume> _engineVolumesRepository;
+        private readonly IEngineVolumeService _engineVolumeService;
         private readonly IMapper _mapper;
 
-        public EngineVolumesController(IRepository<EngineVolume> engineVolumesRepository, IMapper mapper)
+        public EngineVolumesController(IMapper mapper, IEngineVolumeService engineVolumeService)
         {
-            _engineVolumesRepository = engineVolumesRepository;
             _mapper = mapper;
+            _engineVolumeService = engineVolumeService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetEngineVolumes()
         {
-            var engineVolumes = await _engineVolumesRepository
-                .GetAll()
-                .AsNoTracking()
-                .ToListAsync();
+            var engineVolumes = await _engineVolumeService.GetEngineVolumes();
 
             return Ok(_mapper.Map<EngineVolumeDto[]>(engineVolumes));
         }
@@ -40,7 +36,7 @@ namespace CarsShop.API.Controllers
 
             var newEngineVolume = _mapper.Map<EngineVolume>(engineVolume);
 
-            await _engineVolumesRepository.Add(newEngineVolume);
+            await _engineVolumeService.AddEngineVolume(newEngineVolume);
 
             return Ok(_mapper.Map<EngineVolumeDto>(newEngineVolume));
         }

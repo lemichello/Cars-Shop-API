@@ -1,4 +1,4 @@
-namespace CarsShop.DAL.Entities
+namespace CarsShop.Data.Entities
 {
     public class EngineVolume
     {

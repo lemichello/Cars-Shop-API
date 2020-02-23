@@ -1,6 +1,6 @@
 using System;
 
-namespace CarsShop.DAL.Entities
+namespace CarsShop.Data.Entities
 {
     public class PriceHistory
     {
@@ -8,7 +8,7 @@ namespace CarsShop.DAL.Entities
         public float Price { get; set; }
         public DateTime Date { get; set; }
         public int CarId { get; set; }
-        
+
         public Car Car { get; set; }
     }
 }

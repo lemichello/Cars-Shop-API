@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace CarsShop.DAL.Repositories.Abstraction
+namespace CarsShop.DAL.Abstraction
 {
     public interface IRepository<T> where T : class
     {

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using CarsShop.DAL.Repositories.Abstraction;
+using CarsShop.DAL.Abstraction;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.DAL.Repositories.Implementation

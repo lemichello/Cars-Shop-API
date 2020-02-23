@@ -1,4 +1,4 @@
-using CarsShop.DAL.Entities;
+using CarsShop.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.DAL

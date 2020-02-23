@@ -1,11 +1,9 @@
 using AutoMapper;
 using CarsShop.API.Configuration.MapperProfiles;
-using CarsShop.DAL;
-using CarsShop.DAL.Repositories.Abstraction;
-using CarsShop.DAL.Repositories.Implementation;
+using CarsShop.Business.Configuration;
+using CarsShop.DAL.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,8 +28,9 @@ namespace CarsShop.API
                     .AllowAnyHeader()
                     .AllowAnyMethod()));
 
-            services.AddDbContext<DbContext, EfContext>(opt => opt.UseSqlServer(Configuration["ConnectionString"]));
-            services.AddTransient(typeof(IRepository<>), typeof(EfRepository<>));
+            services.AddDataAccess(Configuration);
+            services.AddCarsShopBusiness(Configuration);
+
             services.AddAutoMapper(typeof(MapperProfile));
             services.AddControllers();
         }

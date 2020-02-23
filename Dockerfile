@@ -6,7 +6,10 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["CarsShop.API/CarsShop.API.csproj", "CarsShop.API/"]
 COPY ["CarsShop.DAL/CarsShop.DAL.csproj", "CarsShop.DAL/"]
+COPY ["CarsShop.DAL.Abstraction/CarsShop.DAL.Abstraction.csproj", "CarsShop.DAL.Abstraction/"]
+COPY ["CarsShop.Data/CarsShop.Data.csproj", "CarsShop.Data/"]
 COPY ["CarsShop.DTO/CarsShop.DTO.csproj", "CarsShop.DTO/"]
+COPY ["CarsShop.Business/CarsShop.Business.csproj", "CarsShop.Business/"]
 RUN dotnet restore "CarsShop.API/CarsShop.API.csproj"
 COPY . .
 WORKDIR "/src/CarsShop.API"

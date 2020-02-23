@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
-using CarsShop.DAL.Entities;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.FiltersDto;
+using Microsoft.EntityFrameworkCore;
 
-namespace CarsShop.API.Helpers
+namespace CarsShop.Business.Helpers
 {
     public static class QueryableExtensions
     {

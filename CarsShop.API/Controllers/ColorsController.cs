@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using CarsShop.DAL.Entities;
-using CarsShop.DAL.Repositories.Abstraction;
+using CarsShop.Business.EntityServices;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.ColorsDto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.API.Controllers
 {
@@ -12,22 +11,19 @@ namespace CarsShop.API.Controllers
     [ApiController]
     public class ColorsController : ControllerBase
     {
-        private readonly IRepository<Color> _colorsRepository;
+        private readonly IColorService _colorService;
         private readonly IMapper _mapper;
 
-        public ColorsController(IRepository<Color> colorsRepository, IMapper mapper)
+        public ColorsController(IMapper mapper, IColorService colorService)
         {
-            _colorsRepository = colorsRepository;
             _mapper = mapper;
+            _colorService = colorService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetColors()
         {
-            var colors = await _colorsRepository
-                .GetAll()
-                .AsNoTracking()
-                .ToListAsync();
+            var colors = await _colorService.GetColors();
 
             return Ok(_mapper.Map<ColorDto[]>(colors));
         }
@@ -40,7 +36,7 @@ namespace CarsShop.API.Controllers
 
             var newColor = _mapper.Map<Color>(color);
 
-            await _colorsRepository.Add(newColor);
+            await _colorService.AddColor(newColor);
 
             return Ok(_mapper.Map<ColorDto>(newColor));
         }

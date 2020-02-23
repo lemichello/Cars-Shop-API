@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using CarsShop.API.Helpers;
-using CarsShop.DAL.Entities;
-using CarsShop.DAL.Repositories.Abstraction;
+using CarsShop.Business.EntityServices;
+using CarsShop.Data.Entities;
 using CarsShop.DTO.VendorsDto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarsShop.API.Controllers
 {
@@ -14,23 +12,18 @@ namespace CarsShop.API.Controllers
     public class VendorsController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IRepository<Vendor> _vendorsRepository;
+        private readonly IVendorService _vendorService;
 
-        public VendorsController(IRepository<Vendor> vendorsRepository, IMapper mapper)
+        public VendorsController(IMapper mapper, IVendorService vendorService)
         {
-            _vendorsRepository = vendorsRepository;
             _mapper = mapper;
+            _vendorService = vendorService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetVendors([FromQuery] int? index, [FromQuery] int? size)
         {
-            var vendors = await _vendorsRepository
-                .GetAll()
-                .AsNoTracking()
-                .WithPagination(index, size)
-                .ApplyIncludes(x => x.Models)
-                .ToListAsync();
+            var vendors = await _vendorService.GetVendors(index, size);
 
             return Ok(_mapper.Map<VendorDto[]>(vendors));
         }
@@ -39,11 +32,7 @@ namespace CarsShop.API.Controllers
         [Route("{vendorId}")]
         public async Task<IActionResult> GetVendorById(int vendorId)
         {
-            var vendor = await _vendorsRepository
-                .GetAll(x => x.Id == vendorId)
-                .AsNoTracking()
-                .ApplyIncludes(x => x.Models)
-                .FirstOrDefaultAsync();
+            var vendor = await _vendorService.GetVendorById(vendorId);
 
             return Ok(_mapper.Map<VendorDto>(vendor));
         }
@@ -56,7 +45,7 @@ namespace CarsShop.API.Controllers
 
             var newVendor = _mapper.Map<Vendor>(vendor);
 
-            await _vendorsRepository.Add(newVendor);
+            await _vendorService.AddVendor(newVendor);
 
             return Ok(_mapper.Map<VendorDto>(newVendor));
         }
@@ -64,7 +53,7 @@ namespace CarsShop.API.Controllers
         [HttpGet("count")]
         public async Task<IActionResult> GetVendorsCount()
         {
-            return Ok(await _vendorsRepository.GetAll().CountAsync());
+            return Ok(await _vendorService.GetVendorsCount());
         }
     }
 }

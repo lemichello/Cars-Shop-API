@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CarsShop.DAL.Entities
+namespace CarsShop.Data.Entities
 {
     public class Car
     {
